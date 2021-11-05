@@ -1,9 +1,9 @@
 // déclaration des variables nécessaires pour l'affichage des produits //
-let prodImg = document.getElementsByClassName ("item__img");
-let prodPrice = document.getElementById("price");
-let prodDesc = document.getElementById("description");
-let prodColor = document.getElementById("colors");
-let prodName = document.getElementById("title");
+let knapImg = document.getElementsByClassName ("item__img");
+let knapPrice = document.getElementById("price");
+let knapDesc = document.getElementById("description");
+let knapColor = document.getElementById("colors");
+let knapName = document.getElementById("title");
 
 let imageURL = "";
 let imageAlt = "";
@@ -13,67 +13,58 @@ let searchId = new URL(window.location.href).searchParams;
 let newUrl = searchId.get('_id');
 
 // Appel de l'api avec les nouveaux paramètres de recherche //
-console.log(searchId);
+// console.log(searchId); //
 fetch("http://localhost:3000/api/products/" +newUrl )
   .then((response) => response.json())
   .then(data => {
-    prodImg[0].innerHTML = `<img src="${data.imageUrl}" alt="${data.altTxt}">`;
+    knapImg[0].innerHTML = `<img src="${data.imageUrl}" alt="${data.altTxt}">`;
     imageURL = data.imageUrl;
     imageAlt = data.altTxt;
-    prodName.innerHTML = `<h1>${data.name}</h1>`;
-    prodPrice.innerText = `${data.price}`;
-    prodDesc.innerText = `${data.description}`;
+    knapName.innerHTML = `<h1>${data.name}</h1>`;
+    knapPrice.innerText = `${data.price}`;
+    knapDesc.innerText = `${data.description}`;
 
     // on choisit les couleurs par modèle //
-    for (number in data.colors) {
+    for (modele in data.colors) {
       colors.options[colors.options.length] = new Option(
-        data.colors[number],
-        data.colors[number]
+        data.colors[modele],
+        data.colors[modele]
       );
     }
   });
 
 //---------JE RECUPERE LES DONNEES PAR RAPPORT AU CHOIX DE L'UTILISATEUR---------
 
-let productNb = document.getElementById('quantity');
-let colorChoice = document.getElementById('colors');
-
-// je configure un eventListener quand l'utilisateur clique sur ajouter au panier
-const addCart = document.getElementById('addtoCart');
+// je configure un eventListener quand l'utilisateur clique sur ajouter au panier //
+const addCart = document.getElementById("addToCart");
 addCart.addEventListener('click', (event) => {
   event.preventDefault();
-  const  kanapSelect = {
-    id: newID,
+  const knapNb = document.getElementById("quantity");
+  const colorChoice = document.getElementById("colors");
+  let  knapSelect = {
+    id: newUrl,
     image: imageURL,
     alt: imageAlt,
     name: title.textContent,
     price: price.textContent,
-    color: selectColors.value,
-    quantity: selectQuantity.value,
-  };
-  console.log(kanapSelect);
-
-  let kanapLocalStorage =  JSON.parse(localStorage.getItem('product'));
-  console.log(kanapLocalStorage);
-
-  // Ajout des produits sélectionnés dans le localStorage //
-  const addKanapLocalStorage = () => {
-  kanapLocalStorage.push(kanapSelect);
-  // Stockage des données dans le localStorage //
-  localStorage.setItem('product', JSON.stringify(kanapLocalStorage));
-  console.log(addKanapLocalStorage);
-    if (quantity == 0) {
-      alert("Merci de choisir une quantité de produit")
-    }
-  }
+    colors: colorChoice.value,
+    quantity: knapNb.value,
+    };
+    confirmBox(knapSelect);
 });
 
-/* valider une couleur de produit
-valider une quantité de produit  - confirmer qu'une quantité a été ajoutée au panier:"vous venez d'ajouter(n)articles dans le panier"
-si oui alors visualiser le panier en mode pop-up
-    donner la possibilité de supprimer des articles et de revenir à la page d'accueil
-si non alerter "merci de sélectionner une quantité de produits"
-votre commande est-elle complète ? O/N
-Si oui redirection vers la page confirmation pour saisir les données utilisateur
-Si non redirection vers la page d'accueil
-*/
+  knapFinalChoice = ["id", "colors", "quantity", "price"];
+  let sameId = knapSelect.find(elt => elt.id === knapFinalChoice.id && elt.colors === knapFinalChoice.colors);
+  if (sameId = true) {
+    let quantityById = knapSelect.quantity + knapFinalChoice.quantity;
+    knapFinalChoice.quantity = quantityById;
+    localStorage.setItem("article", JSON.stringify(knapInLocalStorage));
+  } else {
+    knapFinalChoice.push(knapSelect);
+    localStorage.setItem("article", JSON.stringify(knapInLocalStorage));
+  };  {
+    knapFinalChoice = [];
+    knapFinalChoice.push(knapSelect);
+    localStorage.setItem("article", JSON.stringify(knapInLocalStorage));
+}
+
