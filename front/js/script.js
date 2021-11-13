@@ -1,14 +1,14 @@
 let apiData = [];  // declaration de la variable qui va récolter les articles à intégrer dans l'index
 
 // récupération des éléments produits dans l'api products //
-const apiProducts = async () => {
+async function apiProduits() {
   await fetch('http://localhost:3000/api/products')
         .then((response) => response.json())
         .then((data) => apiData = data);
 }
 
-const kanapsDisplay = async () => {  // fonction d'affichage des données par les id items déclarés dans l'index //
-  await apiProducts(); 
+async function knapPageIndex() {  // fonction d'affichage des données par les id items déclarés dans l'index //
+  await apiProduits(); 
   document.getElementById("items").innerHTML = (
     apiData.map(article => (
       `<a href="./product.html?_id=${article._id}">
@@ -22,5 +22,4 @@ const kanapsDisplay = async () => {  // fonction d'affichage des données par le
   );
 }
 
-kanapsDisplay();
-
+knapPageIndex();
