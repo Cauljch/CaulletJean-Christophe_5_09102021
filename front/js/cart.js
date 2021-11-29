@@ -82,16 +82,17 @@ function removeKnap() {
 // puis on fait la somme des valeurs du tableau avec la méthode reduce //
 var knapQuantiteFinale = [];
   for (let index = 0; index < knapFinalChoice.length; index++) {
-    knapQuantiteFinale = knapQuantiteFinale + knapFinalChoice[index].quantity;
+    // knapQuantiteFinale = knapQuantiteFinale + knapFinalChoice[index].quantity; //
+    knapQuantiteFinale.push(parseInt(knapFinalChoice[index].quantity));
   }
-
+console.log(knapQuantiteFinale);
 var somme = knapQuantiteFinale.reduce(function (accu, valeur) {
-  return accu+valeur;
+  return accu + valeur;
 });
 console.log(somme);
 
 // affichage du montant total du panier //
-let somme = document.getElementById("totalQuantity");
+document.querySelector("#totalQuantity").innerHTML = somme;
 
 // fonction opérant le calcul par article identique dans le panier //
 function totalAmount() {
@@ -110,13 +111,16 @@ function knapPrixTotal() {
     let knapPriceInBasket = knapFinalChoice[p].price * knapFinalChoice[p].quantity;
     priceByKnap.push(knapPriceInBasket);
   }
+  return priceByKnap;
 }
 
+console.log(knapPrixTotal());
 // Calcul de la somme de tous les prix récupérés dans le tableau priceByKnap //
 const reducer = (cumul, prix) => cumul + prix;
-const prixFinal = priceByKnap.reduce(reducer, 0);
+const prixFinal = knapPrixTotal().reduce(reducer, 0);
 
 let totalToDisplay = document.getElementById("totalPrice");
+// document.querySelector("#totalQuantity").innerHTML = somme; //
 totalToDisplay.insertAdjacentHTML("beforeend", "<div>Le prix total est de ${prixFinal} €</div>");
 
 
@@ -124,11 +128,11 @@ totalToDisplay.insertAdjacentHTML("beforeend", "<div>Le prix total est de ${prix
 let form = document.querySelector(".cart__order__form");
 
 const contact = {
-    prenom = document.getElementById("firstName").value,
-    nom = document.getElementById("lastName").value,
-    adresse = document.getElementById("address").value,
-    ville = document.getElementById("city").value,
-    mail = document.getElementById("email").value,
+    prenom : document.getElementById("firstName").value,
+    nom : document.getElementById("lastName").value,
+    adresse : document.getElementById("address").value,
+    ville : document.getElementById("city").value,
+    mail : document.getElementById("email").value,
 }
 
 // on va tester les 5 champs du formulaire //
@@ -204,3 +208,23 @@ function completeForm () {
     return false;
   }
 }
+
+// après écoute du bouton de confirmation de commande/envoi des infos du client vers un serveur avec méthode post //
+
+const confirmCmd = {
+  method: "POST",
+  body: JSON.stringify(contact),
+  headers: {
+    "Content-Type" : "application/json",
+  }
+};
+
+fetch("http://localhost:3000/api/products/order", confirmCmd)   // affichage de la réponse du serveur //
+  .then(res => res.json())
+  .then(data => {
+    localStorage.setItem("orderId", data.orderId);
+    if (completeForm()) {
+      document.location.href = "confirmation.html";
+    }
+  })
+
