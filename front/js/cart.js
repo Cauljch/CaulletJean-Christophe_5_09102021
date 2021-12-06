@@ -119,112 +119,127 @@ console.log(knapPrixTotal());
 const reducer = (cumul, prix) => cumul + prix;
 const prixFinal = knapPrixTotal().reduce(reducer, 0);
 
+console.log(prixFinal);
 let totalToDisplay = document.getElementById("totalPrice");
 // document.querySelector("#totalQuantity").innerHTML = somme; //
-totalToDisplay.insertAdjacentHTML("beforeend", "<div>Le prix total est de ${prixFinal} €</div>");
+totalToDisplay.insertAdjacentHTML("beforeend", "<div>Le prix total est de : €</div>");
+prixFinal.innerHTML +=`
+<div class="cart__price">
+              <p>Total (<span id="totalQuantity"><!-- 2 --></span> articles) : <span id="totalPrice"><!-- 84,00 --></span></p>
+              <p>${prixFinal}</p>
+              </div>
+`
+// document.querySelector("#totalPrice").innerHTML = prixFinal; //
 
 
-//Formulaire - mise en place des RegEX pour vérifier les entrées de l'utilisateur
-let form = document.querySelector(".cart__order__form");
+/*  ----------------------------LA PARTIE FORMULAIRE---------------------------  */
+// on déclare les variables qui vont servir à remplir le formulaire //
+let regulPrenom = document.getElementById("firstName");
+let regulNom = document.getElementById("lastName");
+let regulAdresse = document.getElementById("address");
+let regulVille = document.getElementById("city");
+let regulMail = document.getElementById("email");
 
-const contact = {
+// on déclare les variables qui détectent les erreurs sur les champs de saisie //
+let prenomError = document.getElementById("firstNameErrorMsg");
+let nomError = document.getElementById("lastNameErrorMsg");
+let adresseError = document.getElementById("addressErrorMsg");
+let villeError = document.getElementById("cityErrorMsg");
+let mailError = document.getElementById("emailErrorMsg");
+
+// on va tester les 5 champs du formulaire au niveau de la saisie en input //
+regulPrenom.addEventListener('input', (e) => {
+  e.preventDefault();
+  if (/^[-'a-zA-ZÀ-ÖØ-öø-ÿ\s]{3,}$/.test(regulPrenom.value) == true ) {
+    prenomError.innerText = '';
+  } else {
+    prenomError.innerText =
+        'Un prénom doit contenir 3 caractères minimum et seulement des lettres';
+  }
+});
+
+regulNom.addEventListener('input', (e) => {
+  e.preventDefault();
+  if (/^[-'a-zA-ZÀ-ÖØ-öø-ÿ\s]{2,}$/.test(regulNom.value) == true ) {
+    nomError.innerText = '';
+  } else {
+    nomError.innerText =
+        'Un nom doit contenir 2 caractères minimum et seulement des lettres';
+  }
+});
+
+regulAdresse.addEventListener('input', (e) => {
+  e.preventDefault();
+  if (/^[-'a-zA-Z0-9À-ÖØ-öø-ÿ\s]{3,}$/.test(regulAdresse.value) == true ) {
+    adresseError.innerText = '';
+  } else {
+    adresseError.innerText = 'Le format d\'\ adresse est non valide et doit comporter 3 caractères minimum';
+  }
+});
+
+regulVille.addEventListener('input', (e) => {
+  e.preventDefault();
+  if (/^[-'a-zA-ZÀ-ÖØ-öø-ÿ\s]{1,}$/.test(regulVille.value) == true ) {
+    villeError.innerText = '';
+  } else {
+      villeError.innerText = 'Le format de ville est non valide';
+  }
+});
+
+regulMail.addEventListener('input', (e) => {
+  e.preventDefault();
+  if (/^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/.test(regulMail.value) == true ) {
+    mailError.innerText = '';
+  } else {
+    mailError.innerText = 'email non valide (exemple : contact@generique.com)';
+  }
+});
+
+// mise en place de l'évènement lié au bouton commander //
+// créer un tableau qui va récupérer les id dans le knapFinalChoice //
+  // le finalData va contenir les id et la fiche contact à envoyer au serveur post //
+  // l'orderId renvoyé par le serveur sera inscrit ds le localS pour être traité ds le fchier de confirmation //
+
+const finalCommand = document.querySelector(".cart__order__form__submit");
+finalCommand.addEventListener('click', (e) => {
+  e.preventDefault();
+  const selectId = [];
+  for (let i = 0; i < knapFinalChoice.length; i++) {
+    selectId.push(knapFinalChoice[i].id);
+  }
+  let contact = {
     prenom : document.getElementById("firstName").value,
     nom : document.getElementById("lastName").value,
     adresse : document.getElementById("address").value,
     ville : document.getElementById("city").value,
     mail : document.getElementById("email").value,
-}
+  };
+  console.log(contact);
 
-// on va tester les 5 champs du formulaire //
-
-function testPrenom () {
-  const regulPrenom = this.firstName;
-  const prenomError = document.getElementById("firstNameErrorMsg");
-  if (/^[-'a-zA-ZÀ-ÖØ-öø-ÿ\s]{3,}$/.test(regulPrenom)) {
-    prenomError.innerText = '';
-    return true;
-  } else {
-    prenomError.innerText =
-      'Un prénom doit contenir 3 caractères minimum et seulement des lettres';
+  const finalData = {
+    selectId,
+    contact,
   }
-}
 
-function testNom () {
-  const regulNom = this.lasttName;
-  const nomError = document.getElementById("lastNameErrorMsg");
-  if (/^[-'a-zA-ZÀ-ÖØ-öø-ÿ\s]{2,}$/.test(regulNom)) {
-    nomError.innerText = '';
-    return true;
-  } else {
-    nomError.innerText =
-      'Un nom doit contenir 2 caractères minimum et seulement des lettres';
-  }
-}
-
-function testAdresse () {
-  const regulAdresse = this.address;
-  const adresseError = document.getElementById("addressErrorMsg");
-  if (/^[-'a-zA-Z0-9À-ÖØ-öø-ÿ\s]{3,}$/.test(regulAdresse)) {
-    adresseError.innerText = '';
-    return true;
-  } else {
-    adresseError.innerText = `Le format d'adresse est non valide et doit comporter 3 caractères minimum`;
-  }
-}
-
-function testVille () {
-  const regulVille = this.city;
-  const villeError = document.getElementById("cityErrorMsg");
-  if (/^[-'a-zA-ZÀ-ÖØ-öø-ÿ\s]{1,}$/.test(regulVille)) {
-    villeError.innerText = '';
-    return true;
-  } else {
-    villeError.innerText = `Le format de ville est non valide`;
-  }
-}
-
-function testMail () {
-  const regulMail = this.email;
-  const mailError = document.getElementById("emailErrorMsg");
-  if (/^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/.test(regulMail)) {
-    mailError.innerText = '';
-    return true;
-  } else {
-    mailError.innerText = `email non valide (exemple : contact@generique.com)`;
-  }
-}
-
-function completeForm () {
-  if (
-    testPrenom () &&
-    testNom () &&
-    testAdresse () &&
-    testVille () &&
-    testMail ()
-  ) {
-    return true;
-  } else {
-    alert ("le formulaire n'est pas complété entièrement");
-    return false;
-  }
-}
-
-// après écoute du bouton de confirmation de commande/envoi des infos du client vers un serveur avec méthode post //
-
-const confirmCmd = {
-  method: "POST",
-  body: JSON.stringify(contact),
-  headers: {
-    "Content-Type" : "application/json",
-  }
-};
-
-fetch("http://localhost:3000/api/products/order", confirmCmd)   // affichage de la réponse du serveur //
-  .then(res => res.json())
-  .then(data => {
-    localStorage.setItem("orderId", data.orderId);
-    if (completeForm()) {
-      document.location.href = "confirmation.html";
+  // création d'une constante initiant une requête Post avec renvoi d'un n° d'ordre //
+  const confirmCmd = {
+    method: "POST",
+    body: JSON.stringify(finalData),
+    headers: {
+      'Accept' : 'application/json',
+      "Content-Type" : "application/json",
     }
-  })
+  }
+  
+  fetch("http://localhost:3000/api/products/order", confirmCmd)   // affichage de la réponse du serveur //
+    .then(res => res.json())
+    .then(data => {
+      localStorage.clear;
+      if (completeForm()) {
+        document.location.href = "confirmation.html";
+      }
+    })
+})
+
+
 
