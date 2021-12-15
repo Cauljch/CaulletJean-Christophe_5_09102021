@@ -29,6 +29,7 @@ if(knapFinalChoice === null || knapFinalChoice == 0) {
           <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${knapFinalChoice[k].quantity}">
         </div>
         <div class="cart__item__content__settings__delete">
+          <br>
           <p class="deleteItem">Supprimer</p>
         </div>
       </div>
@@ -44,23 +45,24 @@ if(knapFinalChoice === null || knapFinalChoice == 0) {
 
 // déclaration de modification de la quantité par article //
 function modifQuantite() {
-  let knapQuantite = document.getElementsByName("itemQuantity");
+  let knapQuantite = document.querySelector(".itemQuantity");
   for (let q = 0; q < knapQuantite.length; q++) {
-    knapQuantite[q] = addEventListener("input", (event) => {
+    knapQuantite[q].addEventListener("input", (event) => {
       event.preventDefault();
-      let newValue = knapQuantite[q].value;
+      let newValue = event.target.value;
       knapFinalChoice[k].quantity = newValue;
-      alert("votre quantité de produit a bien été modifiée")
+      alert("votre quantité de produit a bien été modifiée");
       window.location.reload;
+      localStorage.setItem("article", JSON.stringify(knapFinalChoice));      
     })
   }
+  // mise à jour des articles dans le localStorage //
+  localStorage.setItem("article", JSON.stringify(knapFinalChoice));
+  
 }
+modifQuantite();
 
-// mise à jour des articles dans le localStorage //
-localStorage.setItem("article", JSON.stringify(knapFinalChoice));
-
-
-// insertion d'un bouton supprimer l'article //
+// écoute du bouton supprimer l'article //
 function removeKnap() {
   const btnSupArticle = document.getElementsByClassName("deleteItem");
   for (let k = 0; k < btnSupArticle.length; k++) {
@@ -72,10 +74,11 @@ function removeKnap() {
     // cette variable mise à jour revient modifier le localStorage //
     localStorage.setItem("article", JSON.stringify(knapFinalChoice));
     alert("le produit a bien été supprimé du panier");
-    window.location.href("panier.html");
-  });
+    window.location.href("cart.html");
+    });
+  }
 }
-}
+removeKnap(); 
 
 // affichage du nombre total d'articles dans le panier //
 // on crée un tableau qui récupère toutes les quantités affichées dans le panier //
@@ -91,7 +94,7 @@ var somme = knapQuantiteFinale.reduce(function (accu, valeur) {
 });
 console.log(somme);
 
-// affichage du montant total du panier //
+// affichage du total des articles du panier //
 document.querySelector("#totalQuantity").innerHTML = somme;
 
 // fonction opérant le calcul par article identique dans le panier //
@@ -221,10 +224,19 @@ finalCommand.addEventListener('click', (e) => {
     contact,
   }
 
+  console.log(finalData);
   // création d'une constante initiant une requête Post avec renvoi d'un n° d'ordre //
   const confirmCmd = {
     method: "POST",
-    body: JSON.stringify(finalData),
+    body: JSON.stringify({
+      contact:{
+        firstName: contact.prenom,
+        lastName: contact.nom,
+        address: contact.adresse,
+        city: contact.ville,
+        email: contact.mail
+      },
+      products:selectId}),
     headers: {
       'Accept' : 'application/json',
       "Content-Type" : "application/json",
@@ -234,10 +246,11 @@ finalCommand.addEventListener('click', (e) => {
   fetch("http://localhost:3000/api/products/order", confirmCmd)   // affichage de la réponse du serveur //
     .then(res => res.json())
     .then(data => {
+      console.log(data);
       localStorage.clear;
-      if (completeForm()) {
-        document.location.href = "confirmation.html";
-      }
+      //if (completeForm()) { 
+        document.location.href.replace(`confirmation.html?id=${data.orderId}`);
+      //} 
     })
 })
 
