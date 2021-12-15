@@ -45,36 +45,44 @@ if(knapFinalChoice === null || knapFinalChoice == 0) {
 
 // déclaration de modification de la quantité par article //
 function modifQuantite() {
-  let knapQuantite = document.querySelector(".itemQuantity");
+  let knapQuantite = document.querySelectorAll(".itemQuantity");
   for (let q = 0; q < knapQuantite.length; q++) {
-    knapQuantite[q].addEventListener("input", (event) => {
-      event.preventDefault();
-      let newValue = event.target.value;
+    knapQuantite[q].addEventListener("change", (e) => {
+      e.preventDefault();
+      let newValue = e.target.value;
+      let majArticles = {
+        alt : knapFinalChoice[q].alt,
+        color : knapFinalChoice[q].color,
+        id : knapFinalChoice[q].id,
+        image : knapFinalChoice[q].image,
+        name : knapFinalChoice[q].name,
+        price : knapFinalChoice[q].price,
+        quantity : newValue,
+      };
+      knapFinalChoice[q] = majArticles;
       knapFinalChoice[k].quantity = newValue;
       alert("votre quantité de produit a bien été modifiée");
+
+      // mise à jour des articles dans le localStorage //
+      localStorage.clear;
+      localStorage.setItem("article", JSON.stringify(knapFinalChoice));
       window.location.reload;
-      localStorage.setItem("article", JSON.stringify(knapFinalChoice));      
     })
   }
-  // mise à jour des articles dans le localStorage //
-  localStorage.setItem("article", JSON.stringify(knapFinalChoice));
-  
-}
 modifQuantite();
 
 // écoute du bouton supprimer l'article //
 function removeKnap() {
-  const btnSupArticle = document.getElementsByClassName("deleteItem");
+  const btnSupArticle = document.getElementsByClassName(".deleteItem");
   for (let k = 0; k < btnSupArticle.length; k++) {
     btnSupArticle[k] = addEventListener("click", (event) => {
     event.preventDefault();
-    let idArticleDelete = knapFinalChoice[k].id;
-    knapFinalChoice = knapFinalChoice.filter(index => index.id != idArticleDelete);
-
-    // cette variable mise à jour revient modifier le localStorage //
+    knapFinalChoice.splice(k, 1)
+    
+    // mise à jour des articles dans le localStorage //
     localStorage.setItem("article", JSON.stringify(knapFinalChoice));
     alert("le produit a bien été supprimé du panier");
-    window.location.href("cart.html");
+    window.location.reload;
     });
   }
 }
@@ -223,6 +231,7 @@ finalCommand.addEventListener('click', (e) => {
     selectId,
     contact,
   }
+})
 
   console.log(finalData);
   // création d'une constante initiant une requête Post avec renvoi d'un n° d'ordre //
@@ -248,11 +257,6 @@ finalCommand.addEventListener('click', (e) => {
     .then(data => {
       console.log(data);
       localStorage.clear;
-      //if (completeForm()) { 
         document.location.href.replace(`confirmation.html?id=${data.orderId}`);
-      //} 
     })
-})
-
-
-
+  }
