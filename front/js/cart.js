@@ -9,7 +9,6 @@ console.log(knapBasket);
 if(knapFinalChoice === null || knapFinalChoice == 0) {
   alert("votre panier est vide / retourner à l'accueil pour faire votre selection")
 } else {
-  console.log(knapFinalChoice);
   const contenuPanier = document.getElementById("cart__items")
   for (let k = 0; k < knapFinalChoice.length; k++) {
     contenuPanier.innerHTML += `
@@ -26,11 +25,11 @@ if(knapFinalChoice === null || knapFinalChoice == 0) {
       <div class="cart__item__content__settings">
         <div class="cart__item__content__settings__quantity">
           <p>Qté : </p>
-          <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${knapFinalChoice[k].quantity}">
+          <input type="number" class="itemQuantity${k}" name="itemQuantity${k}" min="1" max="100" value="${knapFinalChoice[k].quantity}">
         </div>
         <div class="cart__item__content__settings__delete">
           <br>
-          <p class="deleteItem">Supprimer</p>
+          <p class="deleteItem${k}">Supprimer</p>
         </div>
       </div>
       </div>
@@ -45,65 +44,77 @@ if(knapFinalChoice === null || knapFinalChoice == 0) {
 
 // déclaration de modification de la quantité par article //
 function modifQuantite() {
-  let knapQuantite = document.querySelectorAll(".itemQuantity");
-  for (let q = 0; q < knapQuantite.length; q++) {
-    knapQuantite[q].addEventListener("change", (e) => {
-      e.preventDefault();
-      let newValue = e.target.value;
-      let majArticles = {
-        alt : knapFinalChoice[q].alt,
-        color : knapFinalChoice[q].color,
-        id : knapFinalChoice[q].id,
-        image : knapFinalChoice[q].image,
-        name : knapFinalChoice[q].name,
-        price : knapFinalChoice[q].price,
-        quantity : newValue,
-      };
-      knapFinalChoice[q] = majArticles;
-      knapFinalChoice[k].quantity = newValue;
-      alert("votre quantité de produit a bien été modifiée");
+  console.log('knapFinalChoice', knapFinalChoice);
 
-      // mise à jour des articles dans le localStorage //
-      localStorage.clear;
-      localStorage.setItem("article", JSON.stringify(knapFinalChoice));
+  for (let q = 0; q < knapFinalChoice.length; q++) {
+    const knapQuantite = document.querySelector(".itemQuantity"+q);
+    knapQuantite.addEventListener("input", (event) => {
+      event.preventDefault();
+      let newValue = event.target.value;
+      knapFinalChoice[q].quantity = newValue;
+      alert("votre quantité de produit a bien été modifiée");
       window.location.reload;
+      localStorage.setItem("article", JSON.stringify(knapFinalChoice));
+      document.querySelector("#totalQuantity").innerHTML = knapQuantiteFinale();
     })
   }
+
+  /*let knapQuantite = document.querySelector(".itemQuantity");
+  console.log("knapQuantite", knapQuantite)
+  for (let q = 0; q < knapQuantite.length; q++) {
+    knapQuantite[q].addEventListener("input", (event) => {
+      event.preventDefault();
+      let newValue = event.target.value;
+      knapFinalChoice[k].quantity = newValue;
+      alert("votre quantité de produit a bien été modifiée");
+      window.location.reload;
+      localStorage.setItem("article", JSON.stringify(knapFinalChoice));      
+    })
+  }
+  // mise à jour des articles dans le localStorage //
+  localStorage.setItem("article", JSON.stringify(knapFinalChoice));
+  */
+}
 modifQuantite();
 
 // écoute du bouton supprimer l'article //
 function removeKnap() {
-  const btnSupArticle = document.getElementsByClassName(".deleteItem");
-  for (let k = 0; k < btnSupArticle.length; k++) {
-    btnSupArticle[k] = addEventListener("click", (event) => {
-    event.preventDefault();
-    knapFinalChoice.splice(k, 1)
-    
-    // mise à jour des articles dans le localStorage //
-    localStorage.setItem("article", JSON.stringify(knapFinalChoice));
-    alert("le produit a bien été supprimé du panier");
-    window.location.reload;
+  for (let k = 0;k < knapFinalChoice.length; k++) {
+    const btnSupArticle = document.querySelector(".deleteItem"+k);
+
+    btnSupArticle.addEventListener("click", (event) => {
+      event.preventDefault();
+      let idArticleDelete = knapFinalChoice[k].id;
+      let idArticleColor = knapFinalChoice[k].color;
+      knapFinalChoice = knapFinalChoice.filter(index => index.id !== idArticleDelete || index.color !== idArticleColor);
+      localStorage.setItem("article", JSON.stringify(knapFinalChoice));
+      alert("le produit a bien été supprimé du panier");
+      location.reload();
+      document.querySelector("#totalQuantity").innerHTML = knapQuantiteFinale();
     });
   }
 }
-removeKnap(); 
+
+removeKnap();
 
 // affichage du nombre total d'articles dans le panier //
 // on crée un tableau qui récupère toutes les quantités affichées dans le panier //
 // puis on fait la somme des valeurs du tableau avec la méthode reduce //
-var knapQuantiteFinale = [];
+function knapQuantiteFinale()
+{
+  var knapQuantiteFinale = [];
   for (let index = 0; index < knapFinalChoice.length; index++) {
-    // knapQuantiteFinale = knapQuantiteFinale + knapFinalChoice[index].quantity; //
     knapQuantiteFinale.push(parseInt(knapFinalChoice[index].quantity));
   }
-console.log(knapQuantiteFinale);
-var somme = knapQuantiteFinale.reduce(function (accu, valeur) {
-  return accu + valeur;
-});
-console.log(somme);
+  console.log(knapQuantiteFinale);
+  var somme = knapQuantiteFinale.reduce(function (accu, valeur) {
+    return accu + valeur;
+  });
+  return somme
+}
 
 // affichage du total des articles du panier //
-document.querySelector("#totalQuantity").innerHTML = somme;
+document.querySelector("#totalQuantity").innerHTML = knapQuantiteFinale();
 
 // fonction opérant le calcul par article identique dans le panier //
 function totalAmount() {
@@ -231,7 +242,6 @@ finalCommand.addEventListener('click', (e) => {
     selectId,
     contact,
   }
-})
 
   console.log(finalData);
   // création d'une constante initiant une requête Post avec renvoi d'un n° d'ordre //
@@ -256,7 +266,12 @@ finalCommand.addEventListener('click', (e) => {
     .then(res => res.json())
     .then(data => {
       console.log(data);
-      localStorage.clear;
+      //localStorage.clear;
+      //if (completeForm()) { 
         document.location.href.replace(`confirmation.html?id=${data.orderId}`);
+      //} 
     })
-  }
+})
+
+
+
