@@ -58,22 +58,6 @@ function modifQuantite() {
       document.querySelector("#totalQuantity").innerHTML = knapQuantiteFinale();
     })
   }
-
-  /*let knapQuantite = document.querySelector(".itemQuantity");
-  console.log("knapQuantite", knapQuantite)
-  for (let q = 0; q < knapQuantite.length; q++) {
-    knapQuantite[q].addEventListener("input", (event) => {
-      event.preventDefault();
-      let newValue = event.target.value;
-      knapFinalChoice[k].quantity = newValue;
-      alert("votre quantité de produit a bien été modifiée");
-      window.location.reload;
-      localStorage.setItem("article", JSON.stringify(knapFinalChoice));      
-    })
-  }
-  // mise à jour des articles dans le localStorage //
-  localStorage.setItem("article", JSON.stringify(knapFinalChoice));
-  */
 }
 modifQuantite();
 
@@ -145,10 +129,9 @@ console.log(prixFinal);
 let totalToDisplay = document.getElementById("totalPrice");
 // document.querySelector("#totalQuantity").innerHTML = somme; //
 totalToDisplay.insertAdjacentHTML("beforeend", "<div>Le prix total est de : €</div>");
-prixFinal.innerHTML +=`
+prixFinal.innerHTML += `
 <div class="cart__price">
-              <p>Total (<span id="totalQuantity"><!-- 2 --></span> articles) : <span id="totalPrice"><!-- 84,00 --></span></p>
-              <p>${prixFinal}</p>
+              <p>Total (<span id="totalQuantity"><!-- 2 --></span> articles) : "${prixFinal}" </p>
               </div>
 `
 // document.querySelector("#totalPrice").innerHTML = prixFinal; //
@@ -225,52 +208,60 @@ regulMail.addEventListener('input', (e) => {
 const finalCommand = document.querySelector(".cart__order__form__submit");
 finalCommand.addEventListener('click', (e) => {
   e.preventDefault();
-  const selectId = [];
-  for (let i = 0; i < knapFinalChoice.length; i++) {
-    selectId.push(knapFinalChoice[i].id);
-  }
-  let contact = {
-    prenom : document.getElementById("firstName").value,
-    nom : document.getElementById("lastName").value,
-    adresse : document.getElementById("address").value,
-    ville : document.getElementById("city").value,
-    mail : document.getElementById("email").value,
-  };
-  console.log(contact);
-
-  const finalData = {
-    selectId,
-    contact,
-  }
-
-  console.log(finalData);
-  // création d'une constante initiant une requête Post avec renvoi d'un n° d'ordre //
-  const confirmCmd = {
-    method: "POST",
-    body: JSON.stringify({
-      contact:{
-        firstName: contact.prenom,
-        lastName: contact.nom,
-        address: contact.adresse,
-        city: contact.ville,
-        email: contact.mail
-      },
-      products:selectId}),
-    headers: {
-      'Accept' : 'application/json',
-      "Content-Type" : "application/json",
+  // on teste les 5 variables des regexp qui détectent les erreurs de saisie //
+  // si les variables sont vides alors on peut enregistrer les infos pour la commande //
+  if ((prenomError = "") || (nomError = "") || (adresseError = "") || (villeError = "") || (mailError = "")) {
+    const selectId = [];
+    for (let i = 0; i < knapFinalChoice.length; i++) {
+      selectId.push(knapFinalChoice[i].id);
     }
-  }
-  
-  fetch("http://localhost:3000/api/products/order", confirmCmd)   // affichage de la réponse du serveur //
-    .then(res => res.json())
-    .then(data => {
-      console.log(data);
-      //localStorage.clear;
-      //if (completeForm()) { 
-        document.location.href.replace(`confirmation.html?id=${data.orderId}`);
-      //} 
-    })
+    let contact = {
+      prenom : document.getElementById("firstName").value,
+      nom : document.getElementById("lastName").value,
+      adresse : document.getElementById("address").value,
+      ville : document.getElementById("city").value,
+      mail : document.getElementById("email").value,
+    };
+    console.log(contact);
+
+    const finalData = {
+      selectId,
+      contact,
+    }
+    console.log(finalData);
+
+    // création d'une constante initiant une requête Post avec renvoi d'un n° d'ordre //
+    const confirmCmd = {
+      method: "POST",
+      body: JSON.stringify({
+        contact: {
+          firstName : contact.prenom,
+          lastName : contact.nom,
+          address : contact.adresse,
+          city : contact.ville,
+          email : contact.mail
+        },
+        products: selectId
+        }),
+      headers: {
+        'Accept' : 'application/json',
+        "Content-Type" : "application/json",
+      }
+    }
+    
+    fetch("http://localhost:3000/api/products/order", confirmCmd)   // affichage de la réponse du serveur //
+      .then(res => res.json())
+      .then(data => {
+        console.log(data);
+        //localStorage.clear;
+        //if (completeForm()) { 
+          document.location.href.replace(`confirmation.html?id=${data.orderId}`);
+        //} 
+      })
+
+  } else {
+    alert("Veuillez remplir les données du formulaire");
+    }
 })
 
 
