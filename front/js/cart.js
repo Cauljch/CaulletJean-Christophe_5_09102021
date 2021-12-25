@@ -207,20 +207,23 @@ regulMail.addEventListener('input', (e) => {
 
 const finalCommand = document.querySelector(".cart__order__form__submit");
 finalCommand.addEventListener('click', (e) => {
+  console.log(regulPrenom.value);
   e.preventDefault();
   // on teste les 5 variables des regexp qui détectent les erreurs de saisie //
   // si les variables sont vides alors on peut enregistrer les infos pour la commande //
-  if ((prenomError = "") || (nomError = "") || (adresseError = "") || (villeError = "") || (mailError = "")) {
+  if ((regulPrenom = "") && (regulNom = "") && (regulAdresse = "") && (regulVille = "") && (regulMail = "")) {
+    alert("Veuillez remplir les données du formulaire");
+  } else {
     const selectId = [];
     for (let i = 0; i < knapFinalChoice.length; i++) {
       selectId.push(knapFinalChoice[i].id);
     }
     let contact = {
-      prenom : document.getElementById("firstName").value,
-      nom : document.getElementById("lastName").value,
-      adresse : document.getElementById("address").value,
-      ville : document.getElementById("city").value,
-      mail : document.getElementById("email").value,
+      firstName : document.getElementById("firstName").value,
+      lastName : document.getElementById("lastName").value,
+      address : document.getElementById("address").value,
+      city : document.getElementById("city").value,
+      email : document.getElementById("email").value,
     };
     console.log(contact);
 
@@ -231,15 +234,24 @@ finalCommand.addEventListener('click', (e) => {
     console.log(finalData);
 
     // création d'une constante initiant une requête Post avec renvoi d'un n° d'ordre //
+    /*const confirmCmd = {
+      method: "POST",
+      body: JSON.stringify(finalData),
+      headers: {
+        'Accept' : 'application/json',
+        "Content-Type" : "application/json",
+      }
+    }*/
+
     const confirmCmd = {
       method: "POST",
       body: JSON.stringify({
         contact: {
-          firstName : contact.prenom,
-          lastName : contact.nom,
-          address : contact.adresse,
-          city : contact.ville,
-          email : contact.mail
+          firstName : contact.firstName,
+          lastName : contact.lastName,
+          address : contact.address,
+          city : contact.city,
+          email : contact.email
         },
         products: selectId
         }),
@@ -255,14 +267,13 @@ finalCommand.addEventListener('click', (e) => {
         console.log(data);
         //localStorage.clear;
         //if (completeForm()) { 
-          document.location.href.replace(`confirmation.html?id=${data.orderId}`);
+          document.location.href = `confirmation.html?id=${data.orderId}`;
         //} 
       })
 
-  } else {
-    alert("Veuillez remplir les données du formulaire");
-    }
-})
+  }
+  })
+
 
 
 
