@@ -10,6 +10,7 @@ if(knapFinalChoice === null || knapFinalChoice == 0) {
   alert("votre panier est vide / retourner à l'accueil pour faire votre selection")
 } else {
   const contenuPanier = document.getElementById("cart__items")
+  console.log('contenuPanier', contenuPanier)
   for (let k = 0; k < knapFinalChoice.length; k++) {
     contenuPanier.innerHTML += `
     <article class="cart__item" data-id="${knapFinalChoice[k].id}">
@@ -127,14 +128,8 @@ const prixFinal = knapPrixTotal().reduce(reducer, 0);
 
 console.log(prixFinal);
 let totalToDisplay = document.getElementById("totalPrice");
-// document.querySelector("#totalQuantity").innerHTML = somme; //
-totalToDisplay.insertAdjacentHTML("beforeend", "<div>Le prix total est de : €</div>");
-prixFinal.innerHTML += `
-<div class="cart__price">
-              <p>Total (<span id="totalQuantity"><!-- 2 --></span> articles) : "${prixFinal}" </p>
-              </div>
-`
-// document.querySelector("#totalPrice").innerHTML = prixFinal; //
+
+document.querySelector("#totalPrice").innerHTML = prixFinal;
 
 
 /*  ----------------------------LA PARTIE FORMULAIRE---------------------------  */
@@ -211,8 +206,9 @@ finalCommand.addEventListener('click', (e) => {
   e.preventDefault();
   // on teste les 5 variables des regexp qui détectent les erreurs de saisie //
   // si les variables sont vides alors on peut enregistrer les infos pour la commande //
-  if ((regulPrenom = "") && (regulNom = "") && (regulAdresse = "") && (regulVille = "") && (regulMail = "")) {
+  if ((!regulPrenom.value) && (!regulNom.value) && (!regulAdresse.value) && (!regulVille.value) && (!regulMail.value)) {
     alert("Veuillez remplir les données du formulaire");
+    mailError.innerText = 'email non valide (exemple : contact@generique.com)';
   } else {
     const selectId = [];
     for (let i = 0; i < knapFinalChoice.length; i++) {
@@ -275,5 +271,8 @@ finalCommand.addEventListener('click', (e) => {
   })
 
 
-
+/* corrections à effectuer 
+ajout d'un produit dans le panier alors q'aucune couleur n'a été sélectionnée
+le montant total du panier ne se met à jour qu'après un reload
+la commande est validée même si une rubrique est mal renseignée */
 
