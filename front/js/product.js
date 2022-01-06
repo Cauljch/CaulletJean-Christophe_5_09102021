@@ -48,61 +48,66 @@ const colorChoice = document.getElementById('colors');
 const btnAjoutPanier = document.getElementById('addToCart');
 btnAjoutPanier.addEventListener('click', (event) => {
   event.preventDefault();
-
-  const knapSelect = {
-    id: newID,
-    image: imageURL,
-    alt: imageAlt,
-    name: title.textContent,
-    price: price.textContent,
-    color: colorChoice.value,
-    quantity: knapNb.value,
-  };
-  console.log(knapSelect);
-
-  // la variable inscrit les clés/valeurs dans le local storage
-  let knapFinalChoice =  JSON.parse(localStorage.getItem('article'));
-  console.log(knapFinalChoice);
-
-  // on injecte les articles sélectionnés dans le localStorage
-  const injectionLocStor = () => {
-  knapFinalChoice.push(knapSelect);
-  // le push permet de stocker les données récupérées //
-  localStorage.setItem('article', JSON.stringify(knapFinalChoice));
-  console.log(injectionLocStor);
-  }
-
-  let confirmation = () => {
-    alert('Le produit a bien été ajouté au panier');
-  }
-
-  let verif = false;
+  if (colorChoice.value != 0) {
+    const knapSelect = {
+      id: newID,
+      image: imageURL,
+      alt: imageAlt,
+      name: title.textContent,
+      price: price.textContent,
+      color: colorChoice.value,
+      quantity: knapNb.value,
+    };
+    console.log(knapSelect);
   
-  if (knapFinalChoice) {
-  // on créée une variable booléenne pour vérifier les infos contenues dans le localStorage
-  // à savoir l'id et la couleur //
-   knapFinalChoice.forEach (function (clickPanier, key) {
-    if (clickPanier.id == newID && clickPanier.color == colorChoice.value) {
-      knapFinalChoice[key].quantity = parseInt(clickPanier.quantity) + parseInt(knapNb.value);
-      localStorage.setItem('article', JSON.stringify(knapFinalChoice));
-      verif = true;
+    // la variable inscrit les clés/valeurs dans le local storage
+    let knapFinalChoice =  JSON.parse(localStorage.getItem('article'));
+    console.log(knapFinalChoice);
+  
+    // on injecte les articles sélectionnés dans le localStorage
+    const injectionLocStor = () => {
+    knapFinalChoice.push(knapSelect);
+    // le push permet de stocker les données récupérées //
+    localStorage.setItem('article', JSON.stringify(knapFinalChoice));
+    console.log(injectionLocStor);
+    }
+  
+    let confirmation = () => {
+      alert('Le produit a bien été ajouté au panier');
+    }
+  
+    let verif = false;
+    
+    if (knapFinalChoice) {
+    // on créée une variable booléenne pour vérifier les infos contenues dans le localStorage
+    // à savoir l'id et la couleur //
+     knapFinalChoice.forEach (function (clickPanier, key) {
+      if (clickPanier.id == newID && clickPanier.color == colorChoice.value) {
+        knapFinalChoice[key].quantity = parseInt(clickPanier.quantity) + parseInt(knapNb.value);
+        localStorage.setItem('article', JSON.stringify(knapFinalChoice));
+        verif = true;
+        confirmation();
+      }
+    });
+  
+      if (!verif) {
+      injectionLocStor();
       confirmation();
+      console.log(knapFinalChoice);
+      }
     }
-  });
-
-    if (!verif) {
-    injectionLocStor();
-    confirmation();
-    console.log(knapFinalChoice);
+  
+    // dans le cas ou aucun produit n'est présent //
+    else {
+      // déclaration d'un tableau avec la sélection de l'utilisateur //
+      knapFinalChoice = [];
+      injectionLocStor();
+      confirmation();
+      console.log(knapFinalChoice);
     }
-  }
 
-  // dans le cas ou aucun produit n'est présent //
-  else {
-    // déclaration d'un tableau avec la sélection de l'utilisateur //
-    knapFinalChoice = [];
-    injectionLocStor();
-    confirmation();
-    console.log(knapFinalChoice);
+
+  } else {
+    alert("Vous devez impérativement choisir une couleur de canapé");
   }
 });

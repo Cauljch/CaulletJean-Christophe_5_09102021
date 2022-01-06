@@ -120,15 +120,14 @@ function knapPrixTotal() {
   }
   return priceByKnap;
 }
-
 console.log(knapPrixTotal());
 // Calcul de la somme de tous les prix récupérés dans le tableau priceByKnap //
 const reducer = (cumul, prix) => cumul + prix;
 const prixFinal = knapPrixTotal().reduce(reducer, 0);
 
 console.log(prixFinal);
-let totalToDisplay = document.getElementById("totalPrice");
 
+let totalToDisplay = document.getElementById("totalPrice");
 document.querySelector("#totalPrice").innerHTML = prixFinal;
 
 
@@ -208,6 +207,10 @@ finalCommand.addEventListener('click', (e) => {
   // si les variables sont vides alors on peut enregistrer les infos pour la commande //
   if ((!regulPrenom.value) && (!regulNom.value) && (!regulAdresse.value) && (!regulVille.value) && (!regulMail.value)) {
     alert("Veuillez remplir les données du formulaire");
+    prenomError.innerText = 'Un prénom doit contenir 3 lettres minimum';
+    nomError.innerText = 'Un nom doit contenir 2 lettres minimum';
+    adresseError.innerText = 'Une adresse doit contenir 3 caractères minimum';
+    villeError.innerText = 'Une ville doit contenir 2 lettres minimum';
     mailError.innerText = 'email non valide (exemple : contact@generique.com)';
   } else {
     const selectId = [];
@@ -230,15 +233,6 @@ finalCommand.addEventListener('click', (e) => {
     console.log(finalData);
 
     // création d'une constante initiant une requête Post avec renvoi d'un n° d'ordre //
-    /*const confirmCmd = {
-      method: "POST",
-      body: JSON.stringify(finalData),
-      headers: {
-        'Accept' : 'application/json',
-        "Content-Type" : "application/json",
-      }
-    }*/
-
     const confirmCmd = {
       method: "POST",
       body: JSON.stringify({
@@ -272,7 +266,7 @@ finalCommand.addEventListener('click', (e) => {
 
 
 /* corrections à effectuer 
-ajout d'un produit dans le panier alors q'aucune couleur n'a été sélectionnée
-le montant total du panier ne se met à jour qu'après un reload
+ajout d'un produit dans le panier alors q'aucune couleur n'a été sélectionnée Bug corrigé
+le montant total du panier ne se met à jour qu'après un reload  : le montant total se met à jour lorsqu'on supprime un article
 la commande est validée même si une rubrique est mal renseignée */
 
