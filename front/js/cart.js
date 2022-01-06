@@ -57,6 +57,7 @@ function modifQuantite() {
       window.location.reload;
       localStorage.setItem("article", JSON.stringify(knapFinalChoice));
       document.querySelector("#totalQuantity").innerHTML = knapQuantiteFinale();
+      // il faut appeler la fonction de calcul des articles dans le panier //
     })
   }
 }
@@ -120,6 +121,7 @@ function knapPrixTotal() {
   }
   return priceByKnap;
 }
+
 console.log(knapPrixTotal());
 // Calcul de la somme de tous les prix récupérés dans le tableau priceByKnap //
 const reducer = (cumul, prix) => cumul + prix;
