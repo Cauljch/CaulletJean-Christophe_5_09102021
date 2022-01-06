@@ -205,8 +205,9 @@ finalCommand.addEventListener('click', (e) => {
   e.preventDefault();
   // on teste les 5 variables des regexp qui détectent les erreurs de saisie //
   // si les variables sont vides alors on peut enregistrer les infos pour la commande //
-  if ((!regulPrenom.value) && (!regulNom.value) && (!regulAdresse.value) && (!regulVille.value) && (!regulMail.value)) {
-    alert("Veuillez remplir les données du formulaire");
+  if ((regulPrenom.value == "") || (regulNom.value == "") || (regulAdresse.value == "") || (regulVille.value == "") || (regulMail.value == "")) {
+  //if ((!regulPrenom.value) && (!regulNom.value) && (!regulAdresse.value) && (!regulVille.value) && (!regulMail.value)) { //
+    alert("Veuillez remplir toutes les données du formulaire");
     prenomError.innerText = 'Un prénom doit contenir 3 lettres minimum';
     nomError.innerText = 'Un nom doit contenir 2 lettres minimum';
     adresseError.innerText = 'Une adresse doit contenir 3 caractères minimum';
