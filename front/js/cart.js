@@ -77,6 +77,7 @@ function removeKnap() {
       alert("le produit a bien été supprimé du panier");
       location.reload();
       document.querySelector("#totalQuantity").innerHTML = knapQuantiteFinale();
+      knapPrixTotal();
     });
   }
 }
@@ -118,20 +119,15 @@ function knapPrixTotal() {
   for (let p = 0; p < knapFinalChoice.length; p++) {
     let knapPriceInBasket = knapFinalChoice[p].price * knapFinalChoice[p].quantity;
     priceByKnap.push(knapPriceInBasket);
+  // Calcul de la somme de tous les prix récupérés dans le tableau priceByKnap //
+    const reducer = (cumul, prix) => cumul + prix;
+    prixFinal = priceByKnap.reduce(reducer, 0);
+    console.log(prixFinal);
   }
-  return priceByKnap;
+  //let totalToDisplay = document.getElementById("totalPrice");//
+  document.querySelector("#totalPrice").innerHTML = prixFinal;
 }
-
-console.log(knapPrixTotal());
-// Calcul de la somme de tous les prix récupérés dans le tableau priceByKnap //
-const reducer = (cumul, prix) => cumul + prix;
-const prixFinal = knapPrixTotal().reduce(reducer, 0);
-
-console.log(prixFinal);
-
-let totalToDisplay = document.getElementById("totalPrice");
-document.querySelector("#totalPrice").innerHTML = prixFinal;
-
+knapPrixTotal();
 
 /*  ----------------------------LA PARTIE FORMULAIRE---------------------------  */
 // on déclare les variables qui vont servir à remplir le formulaire //
