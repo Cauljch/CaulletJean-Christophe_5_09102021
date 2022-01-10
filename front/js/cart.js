@@ -4,7 +4,6 @@ let knapFinalChoice =  JSON.parse(localStorage.getItem('article'));
 const knapBasket = document.getElementById("cartAndFormContainer");
 console.log(knapBasket);
 // affichage des produits enregistrés dans le localStorage //
-
 // on parcourt la variable pour afficher les éléments //
 if(knapFinalChoice === null || knapFinalChoice == 0) {
   alert("votre panier est vide / retourner à l'accueil pour faire votre selection")
@@ -57,7 +56,7 @@ function modifQuantite() {
       window.location.reload;
       localStorage.setItem("article", JSON.stringify(knapFinalChoice));
       document.querySelector("#totalQuantity").innerHTML = knapQuantiteFinale();
-      // il faut appeler la fonction de calcul des articles dans le panier //
+      // appel de la fonction de calcul des articles dans le panier et du montant total //
       knapPrixTotal();
     })
   }
@@ -82,7 +81,6 @@ function removeKnap() {
     });
   }
 }
-
 removeKnap();
 
 // affichage du nombre total d'articles dans le panier //
@@ -101,7 +99,6 @@ function knapQuantiteFinale()
   return somme
 }
 
-// affichage du total des articles du panier //
 document.querySelector("#totalQuantity").innerHTML = knapQuantiteFinale();
 
 // fonction opérant le calcul par article identique dans le panier //
@@ -194,9 +191,9 @@ regulMail.addEventListener('input', (e) => {
 });
 
 // mise en place de l'évènement lié au bouton commander //
-// créer un tableau qui va récupérer les id dans le knapFinalChoice //
-  // le finalData va contenir les id et la fiche contact à envoyer au serveur post //
-  // l'orderId renvoyé par le serveur sera inscrit ds le localS pour être traité ds le fchier de confirmation //
+// on crée un tableau qui va récupérer les id dans le knapFinalChoice //
+// le finalData va contenir les id et la fiche contact à envoyer au serveur post //
+// l'orderId renvoyé par le serveur sera inscrit ds le localStorage pour être traité dans le fchier de confirmation //
 
 const finalCommand = document.querySelector(".cart__order__form__submit");
 finalCommand.addEventListener('click', (e) => {
@@ -254,18 +251,11 @@ finalCommand.addEventListener('click', (e) => {
       .then(res => res.json())
       .then(data => {
         console.log(data);
-        //localStorage.clear;
-        //if (completeForm()) { 
-          document.location.href = `confirmation.html?id=${data.orderId}`;
+        document.location.href = `confirmation.html?id=${data.orderId}`;
         //} 
       })
 
   }
-  })
+})
 
-
-/* corrections à effectuer 
-ajout d'un produit dans le panier alors q'aucune couleur n'a été sélectionnée Bug corrigé
-le montant total du panier ne se met à jour qu'après un reload  : le montant total se met à jour lorsqu'on supprime un article
-la commande est validée même si une rubrique est mal renseignée */
 
