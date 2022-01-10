@@ -183,7 +183,7 @@ regulVille.addEventListener('input', (e) => {
 
 regulMail.addEventListener('input', (e) => {
   e.preventDefault();
-  if (/^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/.test(regulMail.value) == true ) {
+  if (/^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$/.test(regulMail.value) == true ) {
     mailError.innerText = '';
   } else {
     mailError.innerText = 'email non valide (exemple : contact@generique.com)';
